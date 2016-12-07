@@ -10,6 +10,9 @@ ARG LASAGNE_VERSION=v0.1
 ARG TORCH_VERSION=latest
 ARG CAFFE_VERSION=master
 
+# Setting Aliyun Ubuntu Mirror
+COPY aliyun.sources.list /etc/apt/sources.list
+
 # Install some dependencies
 RUN apt-get update && apt-get install -y \
 		bc \
@@ -48,9 +51,12 @@ RUN apt-get update && apt-get install -y \
 	update-alternatives --set libblas.so.3 /usr/lib/openblas-base/libblas.so.3
 
 # Install pip
-RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
-	python get-pip.py && \
+COPY get-pip.py /get-pip.py
+RUN	python get-pip.py && \
 	rm get-pip.py
+
+# Setting Aliyun Pip Source
+COPY aliyun.pip.conf /root/.pip/pip.conf
 
 # Add SNI support to Python
 RUN pip --no-cache-dir install \
